@@ -10,6 +10,7 @@ LOGLEVEL = INFO
 # corpus settings
 CORPUS_DIR = "corpus/pdf"
 CORPUS_ENCODING = "utf-8"
+TOKEN_IGNORE_LIST = "corpus/stopwords-de.txt"
 # preprocessing settings
 PREPROCESSING_RESULT_DIR = "corpus/txt"
 PREPROCESSING_TOKENIZER = simple_preprocess
@@ -22,7 +23,7 @@ PREPROCESSING_TOKENIZER_KWARGS = {
 GENSIM_SAVE_DIR = "gensim"
 FASTTEXT_BASE_MODEL = "embeddings/fasttext/deepset_model.bin"
 # k-means settings
-CLUSTERING_MEANS = 2
-CLUSTERING_REPEATS = 1
+CLUSTERING_MEANS = 10
+CLUSTERING_REPEATS = 2
 CLUSTERING_DISTANCE_FUNC = cosine_distance
 CLUSTER_NAME_TOPN = 4
