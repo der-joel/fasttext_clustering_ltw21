@@ -4,17 +4,14 @@ from nltk.cluster import KMeansClusterer, cosine_distance, euclidean_distance
 from matplotlib import pyplot as plt
 import pandas as pd
 import numpy as np
-from os.path import join
+from os.path import join, basename, splitext
 from itertools import chain
 from config import LOGLEVEL, GENSIM_SAVE_DIR, CLUSTERING_MEANS, CLUSTERING_REPEATS, CLUSTERING_DISTANCE_FUNC, \
-    PREPROCESSING_RESULT_DIR, CLUSTER_NAME_TOPN
+    PREPROCESSING_RESULT_DIR, CLUSTER_NAME_TOPN, CSV_RESULT_STORAGE_DIR
 from utils import list_files_in_dir
 
 # setup logging
 basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=LOGLEVEL)
-
-# TODO: remove or load from config
-pd.options.display.max_rows = 10000
 
 # load tokens of the corpus from preprocessed file
 print(f"loading corpus from {PREPROCESSING_RESULT_DIR} ...")
@@ -38,7 +35,7 @@ keyed_vectors = FastTextKeyedVectors.load(filename)
 # most similar word: model.most_similar("word")
 
 # initialize clusterer
-k_means = KMeansClusterer(CLUSTERING_MEANS, CLUSTERING_DISTANCE_FUNC, CLUSTERING_REPEATS)
+k_means = KMeansClusterer(CLUSTERING_MEANS, CLUSTERING_DISTANCE_FUNC, CLUSTERING_REPEATS, avoid_empty_clusters=True)
 
 # cluster vectors with k-means for each document
 results = {}
@@ -49,10 +46,6 @@ for path, document in corpus.items():
         # skip empty tokens
         if not token or token.isspace():
             continue
-        """# skip if token is not in the given model
-        if token not in keyed_vectors:
-            print(f"could not find {token} in the loaded word embeddings (skipping) ...")
-            continue"""
         # get word vector for token
         try:
             vec = keyed_vectors.get_vector(token)
@@ -69,20 +62,12 @@ for path, document in corpus.items():
     # cluster word vectors using k-means
     print(f"clustering vectors of document {path} using {CLUSTERING_DISTANCE_FUNC.__name__} as distance measure "
           f"with {CLUSTERING_MEANS} means and {CLUSTERING_REPEATS} repeats ...")
-    assigned_clusters = None
-    while assigned_clusters is None:
-        try:
-            assigned_clusters = k_means.cluster(vectors, assign_clusters=True)
-        except AssertionError:
-            # k-means implementation of nltk package throws assertion error
-            # if one of the clusters is empty during iteration
-            # in this case retry until a result is received
-            print(f"empty cluster found (retrying) ...")
+    assigned_clusters = k_means.cluster(vectors, assign_clusters=True)
     # add result to pandas data frame
     dataframe = pd.DataFrame({
         "word": document,
         "cluster": assigned_clusters,
-        "vector": vectors
+        #"vector": vectors
     })
     # calculate cluster centroids
     cluster_centroids = k_means.means()
@@ -94,7 +79,7 @@ for path, document in corpus.items():
         most_similar = keyed_vectors.most_similar(positive=[centroid], topn=CLUSTER_NAME_TOPN)
         cluster_names.append(tuple([kv[0] for kv in most_similar]))
     dataframe["cluster_name_corpus"] = dataframe["cluster"].apply(lambda c: cluster_names[c])
-    # TODO: this takes forever user better approach
+    # TODO: this takes forever use better approach
     """# calculate cluster names from vocabulary (most similar word vector to cluster centroid)
     print(f"calculating cluster names (from vocabulary) ...")
     cluster_names = []
@@ -103,17 +88,8 @@ for path, document in corpus.items():
         print(most_similar)
         cluster_names.append(tuple([kv[0] for kv in most_similar]))"""
     dataframe["cluster_name_vocabulary"] = dataframe["cluster"].apply(lambda c: cluster_names[c])
-    # add dataframe to results dict
-    results[path] = dataframe
+    # save result to disk
     print(f"clustering completed for {path} ...")
-
-# print cluster names for each document
-print("\n\nresults:")
-for document_name, dataframe in results.items():
-    print(f"{document_name} (from corpus):")
-    for cluster_name in dataframe["cluster_name_corpus"].unique():
-        print(cluster_name)
-    """print(f"{document_name} (from vocabulary):")
-    for cluster_name in dataframe["cluster_name_vocabulary"].unique():
-        print(cluster_name)"""
-    print()
+    storage_path = join(CSV_RESULT_STORAGE_DIR, basename(splitext(path)[0]) + ".csv")
+    dataframe.to_csv(storage_path)
+    print(f"saved result to {storage_path}")
