@@ -67,7 +67,6 @@ for path, document in corpus.items():
     dataframe = pd.DataFrame({
         "word": document,
         "cluster": assigned_clusters,
-        #"vector": vectors
     })
     # calculate cluster centroids
     cluster_centroids = k_means.means()
@@ -80,14 +79,16 @@ for path, document in corpus.items():
         cluster_names.append(tuple([kv[0] for kv in most_similar]))
     dataframe["cluster_name_corpus"] = dataframe["cluster"].apply(lambda c: cluster_names[c])
     # TODO: this takes forever use better approach
-    """# calculate cluster names from vocabulary (most similar word vector to cluster centroid)
+    # calculate cluster names from vocabulary (most similar word vector to cluster centroid)
+    """ 
     print(f"calculating cluster names (from vocabulary) ...")
     cluster_names = []
     for centroid in cluster_centroids:
         most_similar = keyed_vectors.most_similar_to_given(centroid, vectors)
         print(most_similar)
-        cluster_names.append(tuple([kv[0] for kv in most_similar]))"""
+        cluster_names.append(tuple([kv[0] for kv in most_similar]))
     dataframe["cluster_name_vocabulary"] = dataframe["cluster"].apply(lambda c: cluster_names[c])
+    """
     # save result to disk
     print(f"clustering completed for {path} ...")
     storage_path = join(CSV_RESULT_STORAGE_DIR, basename(splitext(path)[0]) + ".csv")

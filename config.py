@@ -12,6 +12,7 @@ HTML_RESULT_STORAGE_DIR = "results/html"
 # corpus settings
 CORPUS_DIR = "corpus/pdf"
 CORPUS_ENCODING = "utf-8"
+CORPUS_REMOVE_DUPLICATES = True
 TOKEN_IGNORE_LIST = "corpus/stopwords/german_stopwords_full.txt"
 # preprocessing settings
 PREPROCESSING_RESULT_DIR = "corpus/txt"
@@ -24,7 +25,7 @@ PREPROCESSING_TOKENIZER_KWARGS = {
 GENSIM_SAVE_DIR = "gensim"
 FASTTEXT_BASE_MODEL = "embeddings/fasttext/deepset_model.bin"
 # k-means settings
-CLUSTERING_MEANS = 4
-CLUSTERING_REPEATS = 10
+CLUSTERING_MEANS = 30
+CLUSTERING_REPEATS = 200
 CLUSTERING_DISTANCE_FUNC = cosine_distance
-CLUSTER_NAME_TOPN = 4
+CLUSTER_NAME_TOPN = 10
