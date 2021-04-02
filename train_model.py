@@ -1,12 +1,12 @@
 """
-Executing this file will create a gensim model from the preprocessed corpus.
-The preprocessed corpus needs to be available.
+Executing this file will train an existing fasttext-model (defined in FASTTEXT_BASE_MODEL)
+with the tokens from the preprocessed corpus.
+The preprocessed corpus needs to be available (if not execute .
 Currently the preprocessed corpus needs to fit into RAM.
 """
-from gensim.models.fasttext import FastText, load_facebook_model
-from gensim.test.utils import common_corpus  # example
-from os.path import isfile, join
-from config import PREPROCESSING_RESULT_DIR, GENSIM_SAVE_DIR, LOGLEVEL, FASTTEXT_BASE_MODEL, CORPUS_DIR
+from gensim.models.fasttext import load_facebook_model
+from os.path import join
+from config import PREPROCESSING_RESULT_DIR, GENSIM_SAVE_DIR, LOGLEVEL, FASTTEXT_BASE_MODEL
 from logging import basicConfig
 from utils import list_files_in_dir
 import sys

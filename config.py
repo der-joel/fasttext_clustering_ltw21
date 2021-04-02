@@ -2,13 +2,14 @@
 the configuration file of this project
 """
 from logging import INFO
-from gensim.utils import simple_preprocess, tokenize, simple_tokenize
+from gensim.utils import simple_preprocess
 from nltk.cluster import cosine_distance, euclidean_distance
 
 # app settings
 LOGLEVEL = INFO
-CSV_RESULT_STORAGE_DIR = "results/csv"
+PICKLE_RESULT_STORAGE_DIR = "results/pickle"
 HTML_RESULT_STORAGE_DIR = "results/html"
+PNG_RESULT_STORAGE_DIR = "results/png"
 # corpus settings
 CORPUS_DIR = "corpus/pdf"
 CORPUS_ENCODING = "utf-8"
@@ -25,7 +26,7 @@ PREPROCESSING_TOKENIZER_KWARGS = {
 GENSIM_SAVE_DIR = "gensim"
 FASTTEXT_BASE_MODEL = "embeddings/fasttext/deepset_model.bin"
 # k-means settings
-CLUSTERING_MEANS = 30
-CLUSTERING_REPEATS = 200
+CLUSTERING_MEANS = 5
+CLUSTERING_REPEATS = 1
 CLUSTERING_DISTANCE_FUNC = cosine_distance
 CLUSTER_NAME_TOPN = 10
