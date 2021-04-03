@@ -24,7 +24,7 @@ PREPROCESSING_TOKENIZER_KWARGS = {
 }
 # gensim settings
 GENSIM_SAVE_DIR = "gensim"
-FASTTEXT_BASE_MODEL = "embeddings/fasttext/deepset_model.bin"
+FASTTEXT_BASE_MODEL = "embeddings/fasttext/cc.300.de.bin"
 # k-means settings
 CLUSTERING_MEANS = 5
 CLUSTERING_REPEATS = 1
