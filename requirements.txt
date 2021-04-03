@@ -4,3 +4,5 @@ matplotlib,
 numpy,
 scikit-learn,
 pandas
+scipy,
+textract
